@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <ProjectType>library</ProjectType>
+  </PropertyGroup>
+
+  <!-- Publish files directly to the Unity project. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PublishDir>../GlobalGameJam2024Unity/Assets/Plugins/</PublishDir>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <GenerateFullPaths>false</GenerateFullPaths>
+    <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
+    <PathMap>$(AppOutputBase)=..\$(MSBuildProjectName)</PathMap>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="8.0.0-preview.6.23329.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GlobalGameJam2024.Simulation\GlobalGameJam2024.Simulation.csproj" />
+  </ItemGroup>
+
+</Project>
