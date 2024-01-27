@@ -97,13 +97,13 @@ namespace GlobalGameJam2024
 			cameraPullBackEnd.gameObject.SetActive(true);
 
 			yield return new WaitForSeconds(4.0f);
+			yield return StartCoroutine(FadeToBlack(2.0f));
 
 			// Now transition to the normal gameplay camera.
 			cameraPullBackEnd.gameObject.SetActive(false);
 			gameplayCamera.gameObject.SetActive(true);
 
-			yield return new WaitForSeconds(2.0f);
-			yield return StartCoroutine(FadeToBlack(2.0f));
+			yield return new WaitForSeconds(0.5f);
 			yield return StartCoroutine(FadeFromBlack(2.0f));
 
 			yield return new WaitForSeconds(5.0f);
