@@ -32,6 +32,6 @@ public class LobbyService
 		}
 
 		byte[] serializedProcedure = JsonSerializer.SerializeToUtf8Bytes(procedure);
-		return HostClient.WebSocketReceiveWorker.WebSocket.SendAsync(serializedProcedure, WebSocketMessageType.Binary, true, cancellationToken));
+		return HostClient.WebSocketReceiveWorker.WebSocket.SendAsync(serializedProcedure, WebSocketMessageType.Binary, true, cancellationToken);
 	}
 }
