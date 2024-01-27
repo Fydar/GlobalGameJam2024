@@ -76,6 +76,7 @@ public class Program
 		builder.Host.UseSerilog();
 
 		builder.Services.AddSingleton<IClientService, LocalClientService>();
+		builder.Services.AddSingleton<LobbyService>();
 
 		builder.Services.AddControllers();
 
