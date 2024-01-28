@@ -129,6 +129,10 @@ namespace GlobalGameJam2024
 		private void RotateTowards(Transform target)
 		{
 			var direction = (target.position - transform.position).normalized;
+			if (direction.magnitude < 0.5f)
+			{
+				return;
+			}
 			var lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
 			transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * AimSpeed);
 		}
