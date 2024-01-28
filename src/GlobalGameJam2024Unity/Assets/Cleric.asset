@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274e38e3fdddb3f4099fa4d99684b63a, type: 3}
+  m_Name: Cleric
+  m_EditorClassIdentifier: 
+  displayName: Cleric
+  icon: {fileID: 0}
+  accent: {r: 0.6320754, g: 0.27333254, b: 0.0029814949, a: 1}
+  primaryAbility: {fileID: 11400000, guid: 647ac65bd66909d4582939b17427ce3e, type: 2}
+  characterPrefab: {fileID: 919132149155446097, guid: 0f73558c2961f624dbced853348be831, type: 3}

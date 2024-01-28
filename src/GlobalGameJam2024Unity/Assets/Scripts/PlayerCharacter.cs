@@ -46,6 +46,7 @@ namespace GlobalGameJam2024
 		public LocalId PlayerID;
 		public string DisplayName;
 		public Job Job;
+		public GameObject Graphics;
 
 		[SerializeField] private StatStack walkSpeed = new(10);
 
