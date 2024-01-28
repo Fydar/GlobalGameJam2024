@@ -1,4 +1,4 @@
-﻿using GlobalGameJam2024.Simulation.Commands;
+using GlobalGameJam2024.Simulation.Commands;
 using GlobalGameJam2024.Simulation.Services.Network;
 using System;
 using System.Text.Json;
@@ -24,7 +24,7 @@ namespace GlobalGameJam2024
 			_ = RunAsync($"{url}/api/host");
 		}
 
-		public async Task SendCommandAsync(ClientCommand command, CancellationToken cancellationToken = default)
+		public async Task SendCommandAsync(HostCommand command, CancellationToken cancellationToken = default)
 		{
 			if (webSocketChannel == null)
 			{

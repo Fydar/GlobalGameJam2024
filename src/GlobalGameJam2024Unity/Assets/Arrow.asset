@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: Fire Arrow
   damage: 10
-  projectileSpeed: 5
+  projectileSpeed: 15
   projectilePrefab: {fileID: 1519821380921969473, guid: fbbad5da1bbb63d49accfeb1e2e8a74d, type: 3}

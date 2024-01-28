@@ -1,3 +1,4 @@
+using GlobalGameJam2024.Simulation;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,6 +43,10 @@ namespace GlobalGameJam2024
 
 	public class PlayerCharacter : MonoBehaviour
 	{
+		public LocalId PlayerID;
+		public string DisplayName;
+		public Job Job;
+
 		[SerializeField] private StatStack walkSpeed = new(10);
 
 		[SerializeField] private Ability primaryAbility;

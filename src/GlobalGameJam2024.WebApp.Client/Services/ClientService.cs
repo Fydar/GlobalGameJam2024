@@ -2,16 +2,19 @@ using GlobalGameJam2024.Simulation.Commands;
 using GlobalGameJam2024.Simulation.Procedures;
 using GlobalGameJam2024.Simulation.Services.Network;
 using Microsoft.AspNetCore.Components;
+using System.ComponentModel;
 using System.Text;
 using System.Text.Json;
 
 namespace GlobalGameJam2024.WebApp.Client.Services;
 
-public class ClientService : IClientService
+public class ClientService : IClientService, INotifyPropertyChanged
 {
 	private readonly ILogger logger;
 	private WebSocketReceiveWorker? webSocketChannel;
 	private TaskCompletionSource<WebSocketReceiveWorker> connectionTask;
+
+	public UpdateGameStateClientProcedure? GameState { get; private set; }
 
 	public ClientService(
 		ILogger<ClientService> logger,
@@ -27,6 +30,8 @@ public class ClientService : IClientService
 		connectionTask = new TaskCompletionSource<WebSocketReceiveWorker>();
 		_ = RunAsync($"{url}/api/game");
 	}
+
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public async Task SendCommandAsync(ClientCommand clientCommand, CancellationToken cancellationToken = default)
 	{
@@ -77,7 +82,8 @@ public class ClientService : IClientService
 						{
 							case UpdateGameStateClientProcedure updateGameStateClientProcedure:
 							{
-
+								GameState = updateGameStateClientProcedure;
+								PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GameState)));
 								break;
 							}
 						}
@@ -100,5 +106,8 @@ public class ClientService : IClientService
 				}
 			}
 		}
+
+		GameState = null;
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GameState)));
 	}
 }
