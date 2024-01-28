@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace GlobalGameJam2024
 {
@@ -32,8 +33,8 @@ namespace GlobalGameJam2024
 		[SerializeField] private CinemachineVirtualCamera cameraPullBackEnd;
 		[SerializeField] private CinemachineVirtualCamera gameplayCamera;
 		[Space]
-		[SerializeField] private CinemachineGroupComposer campGroupComposer;
-		[SerializeField] private CinemachineGroupComposer gameplayGroupComposer;
+		[SerializeField] private CinemachineTargetGroup campTargetGroup;
+		[SerializeField] private CinemachineTargetGroup gameplayTargetGroup;
 
 		[Header("Gameplay")]
 		[SerializeField] private Animator bossAnimator;
@@ -165,17 +166,19 @@ namespace GlobalGameJam2024
 
 			// Start introduction cinematic by panning across the troops rearranged.
 			Phase = GamePhase.Introduction;
+
 			cameraCamp.gameObject.SetActive(false);
-			cameraPanAcross.gameObject.SetActive(true);
 
-			yield return StartCoroutine(FadeFromBlack(1.0f));
-
-			yield return new WaitForSeconds(5.0f);
-
-			yield return StartCoroutine(FadeToBlack(2.0f));
+			// cameraPanAcross.gameObject.SetActive(true);
+			// 
+			// yield return StartCoroutine(FadeFromBlack(1.0f));
+			// 
+			// yield return new WaitForSeconds(5.0f);
+			// 
+			// yield return StartCoroutine(FadeToBlack(2.0f));
+			// cameraPanAcross.gameObject.SetActive(false);
 
 			// Now bring the camera behind the soldiers, focused on them.
-			cameraPanAcross.gameObject.SetActive(false);
 			cameraPullBackStart.gameObject.SetActive(true);
 
 			yield return StartCoroutine(FadeFromBlack(1.0f));
@@ -254,8 +257,6 @@ namespace GlobalGameJam2024
 					{
 						try
 						{
-							Debug.Log(Encoding.UTF8.GetString(message.MessageContent.Body));
-
 							var hostProcedure = JsonSerializer.Deserialize<HostProcedure>(message.MessageContent.ReadStream());
 
 							switch (hostProcedure)
@@ -273,6 +274,9 @@ namespace GlobalGameJam2024
 									playerCharacter.enabled = false;
 
 									players.Add(playerCharacter.PlayerID, playerCharacter);
+
+									campTargetGroup.AddMember(playerCharacter.transform, 1.0f, 0.35f);
+									gameplayTargetGroup.AddMember(playerCharacter.transform, 1.0f, 0.35f);
 									break;
 								}
 								case PlayerLeftHostProcedure playerLeftHostProcedure:
@@ -281,6 +285,8 @@ namespace GlobalGameJam2024
 									{
 										players.Remove(playerLeftHostProcedure.PlayerID);
 										Destroy(disconnectingPlayer.gameObject);
+										campTargetGroup.RemoveMember(disconnectingPlayer.transform);
+										gameplayTargetGroup.RemoveMember(disconnectingPlayer.transform);
 									}
 									if (playerToSpawnPoint.TryGetValue(playerLeftHostProcedure.PlayerID, out var spawnPoint))
 									{
@@ -296,6 +302,10 @@ namespace GlobalGameJam2024
 										{
 											if (Phase == GamePhase.Gameplay && players.TryGetValue(intakeClientCommandHostProcedure.PlayerID, out var commandingPlayer))
 											{
+												if (commandingPlayer.agent == null)
+												{
+													commandingPlayer.agent = commandingPlayer.GetComponent<NavMeshAgent>();
+												}
 												commandingPlayer.agent.SetDestination(new Vector3(
 													Mathf.Lerp(-15.0f, 15.0f, moveClientCommand.MoveToX),
 													0.0f,
