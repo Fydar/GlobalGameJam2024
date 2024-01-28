@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ef5463778a24064f95c85a7161a37bb, type: 3}
+  m_Name: Archer
+  m_EditorClassIdentifier: 
+  ClassName: Archer
+  PrimaryColor: {r: 0.5019608, g: 0.8980393, b: 0.26666668, a: 1}
+  SecondaryColor: {r: 0.38431376, g: 0.7803922, b: 0.13725491, a: 1}
+  MainResource: {fileID: 11400000, guid: 80a51439ff23f3045b5ebc740aa7bc70, type: 2}
+  Damage: 15
+  MaxHealth: 250
+  AttackStoppingDistance: 4
+  AttackRange: 4.5
+  AttackCooldown: 1.5
+  BasicAttack: {fileID: 11400000, guid: 710d5f4b8877f3e468bc3cf69544bb48, type: 2}
+  Spells:
+  - {fileID: 11400000, guid: a5af59300f2f9d84abd21f5ea0fc2e60, type: 2}
+  - {fileID: 11400000, guid: 9a6a58212dec75c4d8726e8c902dda04, type: 2}

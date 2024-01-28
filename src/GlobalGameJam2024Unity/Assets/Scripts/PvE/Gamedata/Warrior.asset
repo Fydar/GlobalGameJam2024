@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ef5463778a24064f95c85a7161a37bb, type: 3}
+  m_Name: Warrior
+  m_EditorClassIdentifier: 
+  ClassName: Warrior
+  PrimaryColor: {r: 0.78823537, g: 0.3372549, b: 0.2392157, a: 1}
+  SecondaryColor: {r: 0.7019608, g: 0.24313727, b: 0.14901961, a: 1}
+  MainResource: {fileID: 11400000, guid: bdcf57657749d524e8320fe7f051772c, type: 2}
+  Damage: 15
+  MaxHealth: 500
+  AttackStoppingDistance: 1
+  AttackRange: 1.5
+  AttackCooldown: 1.5
+  BasicAttack: {fileID: 11400000, guid: 6865142ada3a1c34092026880558eae2, type: 2}
+  Spells:
+  - {fileID: 11400000, guid: 83a6098ff46ad3a45a715ceb2ef76e71, type: 2}
+  - {fileID: 11400000, guid: 83a6098ff46ad3a45a715ceb2ef76e71, type: 2}
