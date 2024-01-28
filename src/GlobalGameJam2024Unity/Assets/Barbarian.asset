@@ -16,4 +16,4 @@ MonoBehaviour:
   icon: {fileID: 0}
   accent: {r: 0.6320754, g: 0.27333254, b: 0.0029814949, a: 1}
   primaryAbility: {fileID: 11400000, guid: 647ac65bd66909d4582939b17427ce3e, type: 2}
-  characterPrefab: {fileID: 919132149155446097, guid: 5167f8e2aa384764889d8cbaff5da3a0, type: 3}
+  characterPrefab: {fileID: 8332018266238997480, guid: b361d4f80d13d91419815d1fd96ff610, type: 3}
