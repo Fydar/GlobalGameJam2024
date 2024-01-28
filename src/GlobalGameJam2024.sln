@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalGameJam2024.WebApp", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalGameJam2024.WebApp.Client", "GlobalGameJam2024.WebApp.Client\GlobalGameJam2024.WebApp.Client.csproj", "{F0ECBCF8-5BA6-4BBB-840D-0C48BB78B685}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalGameJam2024.Simulation", "GlobalGameJam2024.Simulation\GlobalGameJam2024.Simulation.csproj", "{DD522D5E-C68B-4C6E-B475-1C530357D0C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalGameJam2024.Simulation", "GlobalGameJam2024.Simulation\GlobalGameJam2024.Simulation.csproj", "{DD522D5E-C68B-4C6E-B475-1C530357D0C9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalGameJam2024.UnityPackages", "GlobalGameJam2024.UnityPackages\GlobalGameJam2024.UnityPackages.csproj", "{D3A0C4A2-6AD6-487A-BDF1-9603BD51FA1B}"
 EndProject

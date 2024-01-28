@@ -42,6 +42,11 @@ public class HostController : ControllerBase
 
 		logger.Log(LogLevel.Information, "Accepted host client WebSocket connection");
 
+		lobbyService.HostClient = new Client.Services.Client()
+		{
+			WebSocketReceiveWorker = socketChannel
+		};
+
 		await foreach (var networkEvent in socketChannel.InboundMessages.ReadAllAsync(cancellationToken))
 		{
 			switch (networkEvent)
@@ -90,6 +95,8 @@ public class HostController : ControllerBase
 				}
 			}
 		}
+
+		lobbyService.HostClient = null;
 
 		logger.Log(LogLevel.Information, "Closed host client WebSocket connection");
 	}

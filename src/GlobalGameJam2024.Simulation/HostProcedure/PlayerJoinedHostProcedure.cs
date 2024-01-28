@@ -6,4 +6,5 @@ namespace GlobalGameJam2024.Simulation.Commands;
 public class PlayerJoinedHostProcedure : HostProcedure
 {
 	public LocalId PlayerID { get; set; }
+	public string DisplayName { get; set; }
 }

@@ -14,7 +14,13 @@ namespace GlobalGameJam2024
 {
 	public class GameController : MonoBehaviour
 	{
+		[Header("Configuration")]
 		[SerializeField] private string url;
+
+		[Header("Data")]
+		[SerializeField] private Job[] jobs;
+
+		[Header("Introduction")]
 		[SerializeField] private CanvasGroup blackFade;
 		[SerializeField] private CinemachineVirtualCamera cameraCamp;
 		[SerializeField] private CinemachineVirtualCamera cameraPanAcross;
@@ -147,14 +153,41 @@ namespace GlobalGameJam2024
 							{
 								case PlayerJoinedHostProcedure playerJoinedHostProcedure:
 								{
+									var playerCharacterGameObject = new GameObject($"{playerJoinedHostProcedure.DisplayName} ({playerJoinedHostProcedure.PlayerID})");
+									var playerCharacter = playerCharacterGameObject.AddComponent<PlayerCharacter>();
+
+									playerCharacter.PlayerID = playerJoinedHostProcedure.PlayerID;
+									playerCharacter.DisplayName = playerJoinedHostProcedure.DisplayName;
+									playerCharacter.Job = jobs[UnityEngine.Random.Range(0, jobs.Length - 1)];
+
+									players.Add(playerCharacter.PlayerID, playerCharacter);
 									break;
 								}
 								case PlayerLeftHostProcedure playerLeftHostProcedure:
 								{
+									if (players.TryGetValue(playerLeftHostProcedure.PlayerID, out var disconnectingPlayer))
+									{
+										players.Remove(playerLeftHostProcedure.PlayerID);
+										Destroy(disconnectingPlayer.gameObject);
+									}
 									break;
 								}
 								case IntakeClientCommandHostProcedure intakeClientCommandHostProcedure:
 								{
+									switch (intakeClientCommandHostProcedure.Command)
+									{
+										case MoveClientCommand moveClientCommand:
+										{
+											if (players.TryGetValue(intakeClientCommandHostProcedure.PlayerID, out var commandingPlayer))
+											{
+												commandingPlayer.targetPosition = new Vector3(
+													Mathf.Lerp(-15.0f, 15.0f, moveClientCommand.MoveToX),
+													0.0f,
+													Mathf.Lerp(10.0f, -5.0f, moveClientCommand.MoveToY));
+											}
+											break;
+										}
+									}
 									break;
 								}
 							}

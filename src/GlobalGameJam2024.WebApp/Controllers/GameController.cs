@@ -1,4 +1,5 @@
 using GlobalGameJam2024.Simulation;
+using GlobalGameJam2024.Simulation.ClientCommands;
 using GlobalGameJam2024.Simulation.Commands;
 using GlobalGameJam2024.Simulation.Services.Network;
 using GlobalGameJam2024.WebApp.Client.Services;
@@ -45,6 +46,11 @@ public class GameController : ControllerBase
 
 		var playerID = LocalId.NewId();
 
+		lobbyService.Clients.TryAdd(playerID, new Client.Services.Client()
+		{
+			WebSocketReceiveWorker = socketChannel
+		});
+
 		await foreach (var networkEvent in socketChannel.InboundMessages.ReadAllAsync(cancellationToken))
 		{
 			switch (networkEvent)
@@ -57,6 +63,15 @@ public class GameController : ControllerBase
 
 					switch (clientCommand)
 					{
+						case JoinLobbyClientCommand joinLobbyCommand:
+						{
+							await lobbyService.SendToHostClient(new PlayerJoinedHostProcedure()
+							{
+								PlayerID = playerID,
+								DisplayName = joinLobbyCommand.DisplayName
+							});
+							break;
+						}
 						case MoveClientCommand moveClientCommand:
 						{
 							await lobbyService.SendToHostClient(new IntakeClientCommandHostProcedure()
@@ -92,6 +107,7 @@ public class GameController : ControllerBase
 			}
 		}
 
+		lobbyService.Clients.Remove(playerID, out _);
 		logger.Log(LogLevel.Information, "Closed client WebSocket connection");
 	}
 }
