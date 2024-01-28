@@ -51,7 +51,7 @@ namespace GlobalGameJam2024
 
 		[SerializeField] private Ability primaryAbility;
 
-		private Vector3 targetPosition;
+		public Vector3 targetPosition;
 
 		public StatStack WalkSpeed => walkSpeed;
 

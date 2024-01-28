@@ -1,6 +1,7 @@
 using GlobalGameJam2024.WebApp.Client.Services;
 using GlobalGameJam2024.WebApp.Components;
 using GlobalGameJam2024.WebApp.Utility;
+using LettuceEncrypt;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Serilog;
@@ -62,15 +63,25 @@ public class Program
 			{
 				var appServices = kestral.ApplicationServices;
 
-				kestral.Listen(IPAddress.Any, 80);
+				kestral.Listen(IPAddress.Any, 8060);
 
 				kestral.Listen(
-					IPAddress.Any, 443,
+					IPAddress.Any, 8061,
 					listen => listen.UseHttps(adapter =>
 					{
 						adapter.UseLettuceEncrypt(appServices);
 					}));
 			});
+
+			string domainName = builder.Configuration.GetValue<string>("DOMAINNAME") ?? string.Empty;
+
+			builder.Services.AddLettuceEncrypt(options =>
+			{
+				options.AcceptTermsOfService = true;
+				options.DomainNames = [domainName];
+				options.EmailAddress = "dev.anthonymarmont@gmail.com";
+			})
+				.PersistDataToDirectory(new DirectoryInfo("lettuce"), null);
 		}
 
 		builder.Host.UseSerilog();
@@ -78,6 +89,7 @@ public class Program
 		builder.Services.AddSingleton<IClientService, LocalClientService>();
 		builder.Services.AddSingleton<LobbyService>();
 
+		builder.Services.AddHealthChecks();
 		builder.Services.AddControllers();
 
 		// Add services to the container.
@@ -86,15 +98,17 @@ public class Program
 
 		var app = builder.Build();
 
+		app.UseHealthChecks("/api/health");
+
 		// Configure the HTTP request pipeline.
 		if (app.Environment.IsDevelopment())
 		{
+			app.UseDeveloperExceptionPage();
 			app.UseWebAssemblyDebugging();
 		}
 		else
 		{
 			app.UseExceptionHandler("/Error");
-			// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 			app.UseHsts();
 		}
 
@@ -107,7 +121,6 @@ public class Program
 		app.MapRazorComponents<App>()
 			.AddInteractiveWebAssemblyRenderMode()
 			.AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
-
 
 		return app;
 	}

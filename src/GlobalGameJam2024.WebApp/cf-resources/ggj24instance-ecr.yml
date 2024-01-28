@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: 'ECR: Pew-Pew Instance'
+
+Metadata: {}
+
+Parameters: {}
+
+Mappings: {}
+
+Resources:
+
+  GGJ24InstanceRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: ggj24instance
+
+Outputs:
+
+  InstanceArn:
+    Value: !GetAtt [GGJ24InstanceRepository, Arn]

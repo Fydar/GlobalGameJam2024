@@ -6,13 +6,17 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Numerics;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace GlobalGameJam2024.Simulation;
+
 
 /// <summary>
 /// A structure representing an identifier for a resource locally.
 /// </summary>
 [DebuggerDisplay("{ToString(),nq}")]
+[JsonConverter(typeof(LocalIdJsonConverter))]
 public readonly struct LocalId :
 	IEquatable<LocalId>,
 	IEquatable<ulong>,
@@ -20,7 +24,26 @@ public readonly struct LocalId :
 	IComparable<LocalId>,
 	IComparable<ulong>
 {
-	public class Comparer :
+    private class LocalIdJsonConverter : JsonConverter<LocalId>
+    {
+        public override LocalId Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options)
+        {
+            return new(reader.GetString());
+        }
+
+        public override void Write(
+            Utf8JsonWriter writer,
+            LocalId localId,
+            JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(localId.ToString());
+        }
+    }
+
+    public class Comparer :
 		IComparer,
 		IComparer<LocalId>
 	{

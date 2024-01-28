@@ -1,3 +1,4 @@
+using GlobalGameJam2024.Simulation.ClientCommands;
 using GlobalGameJam2024.WebApp.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -17,6 +18,7 @@ public partial class Home : ComponentBase, IDisposable
 {
 	public User User { get; set; } = new User();
 
+	[Inject] protected IClientService? ClientService { get; set; }
 	[Inject] protected NavigationManager? NavigationManager { get; set; }
 	[Inject] protected IJSRuntime? JsRuntime { get; set; }
 
@@ -32,7 +34,12 @@ public partial class Home : ComponentBase, IDisposable
 
 	public void ValidFormSubmitted(EditContext editContext)
 	{
-		NavigationManager.NavigateTo("/lobby");
+		ClientService.SendCommandAsync(new JoinLobbyClientCommand()
+		{
+			DisplayName = User.DisplayName
+		});
+
+		NavigationManager.NavigateTo("/controls");
 	}
 
 	public void InvalidFormSubmitted(EditContext editContext)
