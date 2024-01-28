@@ -1,0 +1,23 @@
+@page "/"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Home</PageTitle>
+
+<div class="container">
+
+	<div style="height: 128px;"></div>
+
+	<h1 class="text-center">Global Game Jam 2024</h1>
+
+	<div style="height: 128px"></div>
+
+    <EditForm Model=@User OnValidSubmit=@ValidFormSubmitted OnInvalidSubmit=@InvalidFormSubmitted>
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label for="Name">Name</label>
+            <InputText @bind-Value=User.DisplayName class="form-control" id="Name" />
+        </div>
+        <input type="submit" class="btn btn-primary" value="Continue" />
+    </EditForm>
+
+</div>

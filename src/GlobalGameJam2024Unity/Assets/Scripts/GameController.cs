@@ -1,8 +1,13 @@
 using Cinemachine;
+using GlobalGameJam2024.Simulation;
 using GlobalGameJam2024.Simulation.Commands;
 using GlobalGameJam2024.Simulation.Services.Network;
+using NUnit.Framework.Internal;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using UnityEngine;
 
 namespace GlobalGameJam2024
@@ -18,6 +23,10 @@ namespace GlobalGameJam2024
 		[SerializeField] private CinemachineVirtualCamera cameraPullBackEnd;
 		[SerializeField] private CinemachineVirtualCamera gameplayCamera;
 
+		[Header("Spawn")]
+		[SerializeField] private Transform[] spawnPoints;
+
+		private Dictionary<LocalId, PlayerCharacter> players = new();
 
 		private ClientService clientService;
 
@@ -110,10 +119,7 @@ namespace GlobalGameJam2024
 
 			while (true)
 			{
-				_ = clientService.SendCommandAsync(new MoveClientCommand()
-				{
-					MoveTo = new System.Numerics.Vector2(50.0f, 25.0f)
-				});
+				// _ = clientService.SendCommandAsync();
 
 				yield return new WaitForSeconds(1.0f);
 			}
@@ -133,10 +139,27 @@ namespace GlobalGameJam2024
 					{
 						try
 						{
-							using var stream = message.MessageContent.ReadStream();
-							// var procedure = DeserializeProcedure(message.MessageContent.ReadStream());
-							// procedure.ApplyToView(View);
-							// OnProcedureApplied?.Invoke(procedure);
+							Debug.Log(Encoding.UTF8.GetString(message.MessageContent.Body));
+
+							var hostProcedure = JsonSerializer.Deserialize<HostProcedure>(message.MessageContent.ReadStream());
+
+							switch (hostProcedure)
+							{
+								case PlayerJoinedHostProcedure playerJoinedHostProcedure:
+								{
+									break;
+								}
+								case PlayerLeftHostProcedure playerLeftHostProcedure:
+								{
+									break;
+								}
+								case IntakeClientCommandHostProcedure intakeClientCommandHostProcedure:
+								{
+									break;
+								}
+							}
+
+							message.MessageContent.ReturnToPool();
 						}
 						catch (Exception exception)
 						{

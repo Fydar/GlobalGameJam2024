@@ -12,6 +12,10 @@ public class LobbyService
 	public Client HostClient { get; set; }
 	public ConcurrentDictionary<LocalId, Client> Clients { get; } = new ConcurrentDictionary<LocalId, Client>();
 
+	public LobbyService()
+	{
+	}
+
 	internal async Task SendToAllClients(ClientProcedure procedure, CancellationToken cancellationToken = default)
 	{
 		byte[] serializedProcedure = JsonSerializer.SerializeToUtf8Bytes(procedure);

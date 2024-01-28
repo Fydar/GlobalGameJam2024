@@ -1,45 +1,54 @@
 .controls {
-    display: grid;
-    grid-template-columns: 1fr 120px;
-    grid-template-rows: 120px 120px 1fr;
     background-color: #111;
     gap: 20px;
-    height: 100vh;
+    min-height: 100vh;
+    min-width: 100vw;
+    max-height: 100vh;
+    max-width: 100vw;
     box-sizing: border-box;
     padding: 30px;
+    display: flex;
 }
 
     .controls .trackpad {
-        border: 4px solid #333;
+        flex-grow: 1;
         border-radius: 20px;
-        grid-column: 1;
-        grid-row: 1 / 6;
+        border: 4px solid #333;
+        box-sizing: border-box;
+        position: relative;
+        background-image: url("/map4.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        max-height: 50vw;
     }
 
-    .controls .slot-1 {
-        border: 4px solid #333;
-        border-radius: 20px;
-        grid-column: 2;
-        grid-row: 1;
-    }
+        .controls .trackpad .slot-1 {
+            position: absolute;
+            border: 4px solid #333;
+            background-color: #555;
+            border-radius: 50%;
+            width: 15%;
+            aspect-ratio: 1 / 1;
+            right: 50px;
+            top: 50px;
+        }
 
-    .controls .slot-2 {
-        border: 4px solid #333;
-        border-radius: 20px;
-        grid-column: 2;
-        grid-row: 2;
-    }
+        .controls .trackpad .character {
+            position: absolute;
+            border: 4px solid #333;
+            background-color: #555;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            left: 90%;
+            top: 70%;
+            transform: translate(-25px, -25px);
+        }
 
-    .controls .slot-3 {
-        border: 4px solid #333;
-        border-radius: 20px;
-        grid-column: 2;
-        grid-row: 3;
-    }
-
-    .controls .slot-4 {
-        border: 4px solid #333;
-        border-radius: 20px;
-        grid-column: 2;
-        grid-row: 4;
-    }
+        .controls .trackpad .slot-2 {
+            border: 4px solid #333;
+            border-radius: 20px;
+            width: 120px;
+            height: 120px;
+        }
