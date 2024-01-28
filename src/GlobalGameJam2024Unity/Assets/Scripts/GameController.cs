@@ -22,6 +22,7 @@ namespace GlobalGameJam2024
 
 		[Header("Introduction")]
 		[SerializeField] private CanvasGroup blackFade;
+		[SerializeField] private CanvasGroup lobbyHUDFade;
 		[SerializeField] private CinemachineVirtualCamera cameraCamp;
 		[SerializeField] private CinemachineVirtualCamera cameraPanAcross;
 		[SerializeField] private CinemachineVirtualCamera cameraPullBackStart;
@@ -29,10 +30,25 @@ namespace GlobalGameJam2024
 		[SerializeField] private CinemachineVirtualCamera cameraPullBackEnd;
 		[SerializeField] private CinemachineVirtualCamera gameplayCamera;
 
+		[Header("Health Bar")]
+		[SerializeField] private CanvasGroup healthBarFade;
+		[SerializeField] private RectTransform healthBarGrow;
+
 		[Header("Spawn")]
 		[SerializeField] private Transform[] spawnPoints;
 
 		private Dictionary<LocalId, PlayerCharacter> players = new();
+		private Dictionary<LocalId, Transform> playerToSpawnPoint = new();
+
+		private enum GamePhase
+		{
+			Connecting,
+			Lobby,
+			Introduction,
+			Gameplay,
+			Cinematic
+		}
+		private GamePhase Phase;
 
 		private ClientService clientService;
 
@@ -57,6 +73,8 @@ namespace GlobalGameJam2024
 		public IEnumerator Start()
 		{
 			blackFade.alpha = 1.0f;
+			healthBarFade.alpha = 0.0f;
+			lobbyHUDFade.alpha = 0.0f;
 
 			cameraCamp.gameObject.SetActive(true);
 			cameraPanAcross.gameObject.SetActive(false);
@@ -68,20 +86,72 @@ namespace GlobalGameJam2024
 			// Connect to server...
 			clientService = new ClientService(url);
 
+			Phase = GamePhase.Connecting;
+
 			while (!clientService.connectionTask.Task.IsCompletedSuccessfully)
 			{
 				yield return null;
 			}
 
+			// Lobby
+			Phase = GamePhase.Lobby;
 			cameraCamp.gameObject.SetActive(true);
 			yield return StartCoroutine(FadeFromBlack());
 
-			// Lobby
-			yield return new WaitForSeconds(3.0f);
+			foreach (float time in new TimedLoop(1.0f))
+			{
+				lobbyHUDFade.alpha = time;
+				yield return null;
+			}
 
+			while (true)
+			{
+				yield return null;
+
+				foreach (var player in players.Values)
+				{
+					if (!player.enabled)
+					{
+						player.enabled = false;
+						foreach (var spawnPoint in spawnPoints)
+						{
+							bool occupied = false;
+							foreach (var ocupacy in playerToSpawnPoint)
+							{
+								if (ocupacy.Value == spawnPoint)
+								{
+									occupied = true;
+									break;
+								}
+							}
+							if (!occupied)
+							{
+								playerToSpawnPoint[player.PlayerID] = spawnPoint;
+								player.transform.position = spawnPoint.transform.position;
+								player.transform.rotation = spawnPoint.transform.rotation;
+								player.enabled = true;
+								player.targetPosition = spawnPoint.transform.position;
+								break;
+							}
+						}
+					}
+				}
+
+				if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+				{
+					break;
+				}
+			}
+
+			foreach (float time in new TimedLoop(1.0f))
+			{
+				lobbyHUDFade.alpha = 1.0f - time;
+				yield return null;
+			}
 			yield return StartCoroutine(FadeToBlack(1.0f));
 
 			// Start introduction cinematic by panning across the troops rearranged.
+			Phase = GamePhase.Introduction;
 			cameraCamp.gameObject.SetActive(false);
 			cameraPanAcross.gameObject.SetActive(true);
 
@@ -104,7 +174,17 @@ namespace GlobalGameJam2024
 			cameraPullBackStart.gameObject.SetActive(false);
 			cameraPullBackMiddle.gameObject.SetActive(true);
 
-			yield return new WaitForSeconds(4.0f);
+			yield return new WaitForSeconds(1.0f);
+
+			float orignalSizeDeltaX = healthBarGrow.sizeDelta.x;
+			foreach (float time in new TimedLoop(2.0f))
+			{
+				healthBarFade.alpha = time * 3.0f;
+				healthBarGrow.sizeDelta = new Vector2(orignalSizeDeltaX * time, healthBarGrow.sizeDelta.y);
+			}
+
+			yield return new WaitForSeconds(1.0f);
+
 
 			// Now bring the camera behind the soldiers, focused on them, with McFunkypants in the background,
 			// as the soldiers ready themselves for battle.
@@ -119,6 +199,8 @@ namespace GlobalGameJam2024
 			gameplayCamera.gameObject.SetActive(true);
 
 			yield return new WaitForSeconds(0.5f);
+
+			Phase = GamePhase.Gameplay;
 			yield return StartCoroutine(FadeFromBlack(2.0f));
 
 			yield return new WaitForSeconds(5.0f);
@@ -159,8 +241,10 @@ namespace GlobalGameJam2024
 									playerCharacter.PlayerID = playerJoinedHostProcedure.PlayerID;
 									playerCharacter.DisplayName = playerJoinedHostProcedure.DisplayName;
 									playerCharacter.Job = jobs[UnityEngine.Random.Range(0, jobs.Length - 1)];
+									playerCharacter.Graphics = Instantiate(playerCharacter.Job.characterPrefab, playerCharacter.transform);
 
 									players.Add(playerCharacter.PlayerID, playerCharacter);
+									playerCharacter.enabled = false;
 									break;
 								}
 								case PlayerLeftHostProcedure playerLeftHostProcedure:
@@ -170,6 +254,10 @@ namespace GlobalGameJam2024
 										players.Remove(playerLeftHostProcedure.PlayerID);
 										Destroy(disconnectingPlayer.gameObject);
 									}
+									if (playerToSpawnPoint.TryGetValue(playerLeftHostProcedure.PlayerID, out var spawnPoint))
+									{
+										playerToSpawnPoint.Remove(playerLeftHostProcedure.PlayerID);
+									}
 									break;
 								}
 								case IntakeClientCommandHostProcedure intakeClientCommandHostProcedure:
@@ -178,7 +266,7 @@ namespace GlobalGameJam2024
 									{
 										case MoveClientCommand moveClientCommand:
 										{
-											if (players.TryGetValue(intakeClientCommandHostProcedure.PlayerID, out var commandingPlayer))
+											if (Phase == GamePhase.Gameplay && players.TryGetValue(intakeClientCommandHostProcedure.PlayerID, out var commandingPlayer))
 											{
 												commandingPlayer.targetPosition = new Vector3(
 													Mathf.Lerp(-15.0f, 15.0f, moveClientCommand.MoveToX),
