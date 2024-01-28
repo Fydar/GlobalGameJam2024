@@ -2,10 +2,10 @@ using GlobalGameJam2024.Simulation;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace GlobalGameJam2024
 {
-
 	public class StatMultiplier
 	{
 		public float Factor { get; set; }
@@ -43,6 +43,8 @@ namespace GlobalGameJam2024
 
 	public class PlayerCharacter : MonoBehaviour
 	{
+		public NavMeshAgent agent;
+
 		public LocalId PlayerID;
 		public string DisplayName;
 		public Job Job;
@@ -52,34 +54,17 @@ namespace GlobalGameJam2024
 
 		[SerializeField] private Ability primaryAbility;
 
-		public Vector3 targetPosition;
 
 		public StatStack WalkSpeed => walkSpeed;
 
+		private void Start()
+		{
+			agent = GetComponent<NavMeshAgent>();
+		}
+
 		private void Update()
 		{
-			if (Input.GetKey(KeyCode.W))
-			{
-				targetPosition += new Vector3(0, 0, walkSpeed.Value * Time.deltaTime);
-			}
-			if (Input.GetKey(KeyCode.S))
-			{
-				targetPosition += new Vector3(0, 0, -walkSpeed.Value * Time.deltaTime);
-			}
-			if (Input.GetKey(KeyCode.A))
-			{
-				targetPosition += new Vector3(-walkSpeed.Value * Time.deltaTime, 0, 0);
-			}
-			if (Input.GetKey(KeyCode.D))
-			{
-				targetPosition += new Vector3(walkSpeed.Value * Time.deltaTime, 0, 0);
-			}
-			if (Input.GetKeyDown(KeyCode.Space))
-			{
-				StartCoroutine(primaryAbility.PlayAbility(this));
-			}
-
-			transform.position = Vector3.MoveTowards(transform.position, targetPosition, walkSpeed.Value * Time.deltaTime);
+			agent.speed = walkSpeed.Value;
 		}
 	}
 }

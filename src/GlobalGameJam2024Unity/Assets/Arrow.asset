@@ -15,4 +15,4 @@ MonoBehaviour:
   displayName: Fire Arrow
   damage: 10
   projectileSpeed: 15
-  projectilePrefab: {fileID: 1519821380921969473, guid: fbbad5da1bbb63d49accfeb1e2e8a74d, type: 3}
+  projectilePrefab: {fileID: 7075165550210212931, guid: a9b10a7ce2bcd7b4391c95ff05bf95a3, type: 3}
