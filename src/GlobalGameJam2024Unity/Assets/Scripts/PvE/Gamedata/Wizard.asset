@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ef5463778a24064f95c85a7161a37bb, type: 3}
+  m_Name: Wizard
+  m_EditorClassIdentifier: 
+  ClassName: Wizard
+  PrimaryColor: {r: 0.2509804, g: 0.5372549, b: 0.81568635, a: 1}
+  SecondaryColor: {r: 0.16862746, g: 0.4666667, b: 0.7686275, a: 1}
+  MainResource: {fileID: 11400000, guid: 57f334814778c4643b1cf26710d476e0, type: 2}
+  Damage: 15
+  MaxHealth: 250
+  AttackStoppingDistance: 4
+  AttackRange: 4.5
+  AttackCooldown: 2.25
+  BasicAttack: {fileID: 11400000, guid: 4a6c079f27861eb4ab0b45acb1bbd74b, type: 2}
+  Spells:
+  - {fileID: 11400000, guid: 72ea014312b6db040babdbf6f9f339fc, type: 2}
+  - {fileID: 11400000, guid: 83a6098ff46ad3a45a715ceb2ef76e71, type: 2}

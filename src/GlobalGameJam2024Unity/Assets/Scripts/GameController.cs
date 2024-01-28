@@ -2,7 +2,6 @@ using Cinemachine;
 using GlobalGameJam2024.Simulation;
 using GlobalGameJam2024.Simulation.Commands;
 using GlobalGameJam2024.Simulation.Services.Network;
-using NUnit.Framework.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +13,8 @@ namespace GlobalGameJam2024
 {
 	public class GameController : MonoBehaviour
 	{
+		public static GameController Instance { get; private set; }
+
 		[Header("Configuration")]
 		[SerializeField] private string url;
 
@@ -23,22 +24,34 @@ namespace GlobalGameJam2024
 		[Header("Introduction")]
 		[SerializeField] private CanvasGroup blackFade;
 		[SerializeField] private CanvasGroup lobbyHUDFade;
+		[Space]
 		[SerializeField] private CinemachineVirtualCamera cameraCamp;
 		[SerializeField] private CinemachineVirtualCamera cameraPanAcross;
 		[SerializeField] private CinemachineVirtualCamera cameraPullBackStart;
 		[SerializeField] private CinemachineVirtualCamera cameraPullBackMiddle;
 		[SerializeField] private CinemachineVirtualCamera cameraPullBackEnd;
 		[SerializeField] private CinemachineVirtualCamera gameplayCamera;
+		[Space]
+		[SerializeField] private CinemachineGroupComposer campGroupComposer;
+		[SerializeField] private CinemachineGroupComposer gameplayGroupComposer;
+
+		[Header("Gameplay")]
+		[SerializeField] private Animator bossAnimator;
 
 		[Header("Health Bar")]
 		[SerializeField] private CanvasGroup healthBarFade;
 		[SerializeField] private RectTransform healthBarGrow;
 
 		[Header("Spawn")]
+		[SerializeField] private GameObject playerPrefab;
 		[SerializeField] private Transform[] spawnPoints;
 
-		private Dictionary<LocalId, PlayerCharacter> players = new();
-		private Dictionary<LocalId, Transform> playerToSpawnPoint = new();
+		[Space]
+		[SerializeField] private GameObject sheepPrefab;
+		[SerializeField] private Transform[] sheepSpawnPoints;
+
+		public Dictionary<LocalId, PlayerCharacter> players = new();
+		private readonly Dictionary<LocalId, Transform> playerToSpawnPoint = new();
 
 		private enum GamePhase
 		{
@@ -72,6 +85,7 @@ namespace GlobalGameJam2024
 
 		public IEnumerator Start()
 		{
+			Instance = this;
 			blackFade.alpha = 1.0f;
 			healthBarFade.alpha = 0.0f;
 			lobbyHUDFade.alpha = 0.0f;
@@ -130,7 +144,6 @@ namespace GlobalGameJam2024
 								player.transform.position = spawnPoint.transform.position;
 								player.transform.rotation = spawnPoint.transform.rotation;
 								player.enabled = true;
-								player.targetPosition = spawnPoint.transform.position;
 								break;
 							}
 						}
@@ -207,9 +220,23 @@ namespace GlobalGameJam2024
 
 			while (true)
 			{
-				// _ = clientService.SendCommandAsync();
-
+				int wave = 1;
 				yield return new WaitForSeconds(1.0f);
+
+				// McFunkypants summons a wave of pug sheep to attack.
+				for (int i = 0; i < wave * 5; i++)
+				{
+					var sheepSpawn = sheepSpawnPoints[UnityEngine.Random.Range(0, sheepSpawnPoints.Length)];
+					var sheepClone = Instantiate(sheepPrefab, sheepSpawn.position, sheepSpawn.rotation);
+
+					yield return new WaitForSeconds(0.2f);
+				}
+
+
+				if (wave == 10)
+				{
+					break;
+				}
 			}
 		}
 
@@ -235,16 +262,17 @@ namespace GlobalGameJam2024
 							{
 								case PlayerJoinedHostProcedure playerJoinedHostProcedure:
 								{
-									var playerCharacterGameObject = new GameObject($"{playerJoinedHostProcedure.DisplayName} ({playerJoinedHostProcedure.PlayerID})");
-									var playerCharacter = playerCharacterGameObject.AddComponent<PlayerCharacter>();
+									var playerCharacterGameObject = Instantiate(playerPrefab);
+									playerCharacterGameObject.name = $"{playerJoinedHostProcedure.DisplayName} ({playerJoinedHostProcedure.PlayerID})";
+									var playerCharacter = playerCharacterGameObject.GetComponent<PlayerCharacter>();
 
 									playerCharacter.PlayerID = playerJoinedHostProcedure.PlayerID;
 									playerCharacter.DisplayName = playerJoinedHostProcedure.DisplayName;
-									playerCharacter.Job = jobs[UnityEngine.Random.Range(0, jobs.Length - 1)];
+									playerCharacter.Job = jobs[UnityEngine.Random.Range(0, jobs.Length)];
 									playerCharacter.Graphics = Instantiate(playerCharacter.Job.characterPrefab, playerCharacter.transform);
+									playerCharacter.enabled = false;
 
 									players.Add(playerCharacter.PlayerID, playerCharacter);
-									playerCharacter.enabled = false;
 									break;
 								}
 								case PlayerLeftHostProcedure playerLeftHostProcedure:
@@ -268,10 +296,10 @@ namespace GlobalGameJam2024
 										{
 											if (Phase == GamePhase.Gameplay && players.TryGetValue(intakeClientCommandHostProcedure.PlayerID, out var commandingPlayer))
 											{
-												commandingPlayer.targetPosition = new Vector3(
+												commandingPlayer.agent.SetDestination(new Vector3(
 													Mathf.Lerp(-15.0f, 15.0f, moveClientCommand.MoveToX),
 													0.0f,
-													Mathf.Lerp(10.0f, -5.0f, moveClientCommand.MoveToY));
+													Mathf.Lerp(10.0f, -5.0f, moveClientCommand.MoveToY)));
 											}
 											break;
 										}
